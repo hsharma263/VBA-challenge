@@ -8,7 +8,8 @@ Dim TickerOpeningTotal as Double
 Dim TickerClosingTotal as Double
 Dim TickerYearlyChange as Double
 Dim TickerPercentChange as Double
-Dim TotalStockVolume as Long
+Dim TotalStockVolume as LongLong
+TotalStockVolume = 0
 
 'Create loop for work sheets
     ' Find endrow
@@ -26,6 +27,7 @@ Dim TotalStockVolume as Long
                     TickerYearlyChange = TickerClosingTotal - TickerOpeningTotal
                     ' Get percent change 
                     TickerPercentChange = (TickerClosingTotal / TickerOpeningTotal) * 100
+                    TotalStockVolume = TotalStockVolume + Cells(i, 7).Value 
                     'Pring out ticker name 
                     Range("I" & Summary_Table_Row).Value = TickerName
                     'Print out ticker yearly change 
@@ -38,6 +40,8 @@ Dim TotalStockVolume as Long
                         End If
                     'Print out ticker percent yearly change
                     Range("K" & Summary_Table_Row).Value = TickerPercentChange
+                    'Print out total stock volume
+                    Range("L" & Summary_Table_Row).Value = TotalStockVolume
                  ' Code to store current 
 
                     Summary_Table_Row = Summary_Table_Row + 1  
@@ -46,20 +50,13 @@ Dim TotalStockVolume as Long
                     TickerOpeningTotal = 0
                     TickerClosingTotal = 0
                     TickerYearlyChange = 0
+                    TotalStockVolume = 0
                  Else 
                     TickerOpeningTotal = TickerOpeningTotal + Cells(i,3).Value
                     TickerClosingTotal = TickerClosingTotal + Cells(i, 6).Value
+                    TotalStockVolume = TotalStockVolume + Cells(i, 7).Value 
 
                 End If
             Next i
-
-                    'Print ticker name into summary table
-
-                    ' Store info on calculating the yearly % change for the whole ticker
-
-
-' Create function to calculate difference 
-    
-
 
 End Sub
