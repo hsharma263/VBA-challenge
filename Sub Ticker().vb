@@ -1,63 +1,67 @@
 Sub Ticker()
 'Create variable for ticker name as string
-Dim TickerName as String
+Dim TickerName As String
 ' Create summary table
-Dim Summary_Table_Row as Long
+Dim Summary_Table_Row As Long
 Summary_Table_Row = 2
-Dim TickerOpeningTotal as Double
-Dim TickerClosingTotal as Double
-Dim TickerYearlyChange as Double
-Dim TickerPercentChange as Double
-Dim TotalStockVolume as LongLong
+Dim TickerYearlyChange As Double
+Dim TickerPercentChange As Double
+Dim TotalStockVolume As LongLong
+Dim OpeningValue As Double
+Dim ClosingValue As Double
 TotalStockVolume = 0
 
-'Create loop for work sheets
-    For each ws in Worksheets
-        Dim WorkSheetName as String
-        WorkSheetName = ws.Name
-        LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
-        ' Finding the ticker and the next ticker
-            'create loop for rows iterating to LastRow
-            For i = 2 to LastRow
-                 If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
-                    ' Set Ticker name
-                    TickerName = ws.Cells(i, 1).Value
-                    ' Add this last ticker to the total opening and closing values
-                    TickerOpeningTotal = TickerOpeningTotal + ws.Cells(i,3).Value
-                    TickerClosingTotal = TickerClosingTotal + ws.Cells(i, 6).Value
-                    'Get yearly change 
-                    TickerYearlyChange = TickerClosingTotal - TickerOpeningTotal
-                    ' Get percent change 
-                    TickerPercentChange = (TickerYearlyChange / TickerOpeningTotal) * 100
-                    TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value 
+
+
+
+
+'
+   ' For Each ws In Worksheets
+       ' Dim WorkSheetName As String
+       ' WorkSheetName = ws.Name
+        LastRow = Cells(Rows.Count, 1).End(xlUp).Row
+            For i = 2 To LastRow
+                If Cells(i - 1, 1).Value <> Cells(i, 1).Value Then
+                    OpeningValue = Cells(i, 3).Value
+
+                 ElseIf Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
                     
-                    ws.Range("I" & Summary_Table_Row).Value = TickerName
-                    ws.Range("J" & Summary_Table_Row).Value = TickerYearlyChange
-                        If TickerYearlyChange < 0 Then 
-                            ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 3
+                    TickerName = Cells(i, 1).Value
+                
+                    ClosingValue = Cells(i, 6)
+                    
+                    TickerYearlyChange = ClosingValue - OpeningValue
+                    If OpeningValue <> 0 Then
+                        TickerPercentChange = ((ClosingValue - OpeningValue) / OpeningValue)
+                    Else
+                        TickerPercentChange = 0
+                    End If
+                    
+                    TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
+                    
+                    Range("I" & Summary_Table_Row).Value = TickerName
+                    Range("J" & Summary_Table_Row).Value = TickerYearlyChange
+                        If TickerYearlyChange < 0 Then
+                            Range("J" & Summary_Table_Row).Interior.ColorIndex = 3
                         Else
-                            ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 4
+                            Range("J" & Summary_Table_Row).Interior.ColorIndex = 4
                         End If
-                    'Print out ticker percent yearly change
-                    ws.Range("K" & Summary_Table_Row).Value = TickerPercentChange
-                    'Print out total stock volume
-                    ws.Range("L" & Summary_Table_Row).Value = TotalStockVolume
+                    
+                    Range("K" & Summary_Table_Row).Value = TickerPercentChange
+                    Range("L" & Summary_Table_Row).Value = TotalStockVolume
 
-                    Summary_Table_Row = Summary_Table_Row + 1  
+                    Summary_Table_Row = Summary_Table_Row + 1
 
-                    'Reset Ticker values
-                    TickerOpeningTotal = 0
-                    TickerClosingTotal = 0
                     TickerYearlyChange = 0
                     TickerPercentChange = 0
                     TotalStockVolume = 0
-                 Else 
-                    TickerOpeningTotal = TickerOpeningTotal + ws.Cells(i,3).Value
-                    TickerClosingTotal = TickerClosingTotal + ws.Cells(i, 6).Value
-                    TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value 
+                    OpeningValue = 0
+                    ClosingValue = 0
+                 Else
+                    TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
 
                 End If
             Next i
-    Next ws
+   ' Next ws
 
 End Sub
