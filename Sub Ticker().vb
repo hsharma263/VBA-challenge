@@ -37,7 +37,7 @@ Sub Ticker()
 
         For i = 2 To LastRow
             If ws.Cells(i - 1, 1).Value <> ws.Cells(i, 1).Value Then
-                    OpeningValue = ws.Cells(i, 3).Value
+                OpeningValue = ws.Cells(i, 3).Value
 
             ElseIf ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
                 TickerName = ws.Cells(i, 1).Value
@@ -57,8 +57,10 @@ Sub Ticker()
 
                     If TickerYearlyChange < 0 Then
                         ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 3
-                    Else
+                    ElseIf TickerYearlyChange > 0 Then
                         ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 4
+                    Else
+                        ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 0
                     End If
                     
                 ws.Range("K" & Summary_Table_Row).Value = TickerPercentChange
