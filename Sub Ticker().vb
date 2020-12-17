@@ -1,37 +1,38 @@
 Sub Ticker()
-
-    For Each ws In Worksheets
-        'Create variable for ticker name as string
+   For Each ws In Worksheets
         Dim TickerName As String
         Dim Summary_Table_Row As Long
         Summary_Table_Row = 2
         Dim TickerYearlyChange As Double
         Dim TickerPercentChange As Double
         Dim TotalStockVolume As LongLong
+        TotalStockVolume = 0
         Dim OpeningValue As Double
         Dim ClosingValue As Double
-        TotalStockVolume = 0
         Dim TickerHeader As String
         Dim YearlyChangeHeader As String
         Dim PercentChangeHeader As String
         Dim TotalStockVolumeHeader As String
-        Dim GreatestIncrease as Double
-        Dim GreatestDecrease as Double
-        Dim GreatestTotalVolume as LongLong
-
+        Dim GreatestIncrease As Double
+        Dim GreatestDecrease As Double
+        Dim GreatestTotalVolume As LongLong
+        GreatestIncrease = 0
+        GreatestDecrease = 0
+        GreatestTotalVolume = 0
         TickerHeader = "Ticker"
         YearlyChangeHeader = "Yearly Change"
         PercentChangeHeader = "Percent Change"
         TotalStockVolumeHeader = "Total Stock Volume"
-        Cells(1, 9).Value = TickerHeader
-        Cells(1, 10).Value = YearlyChangeHeader
-        Cells(1, 11).Value = PercentChangeHeader
-        Cells(1, 12).Value = TotalStockVolumeHeader
-        Range("O2").Value = "Greatest % Increase"
-        Range("O3").Value = "Greatest % Decrease"
-        Range("O4").Value = "Greatest Total Volume"
-        Range("P1").Value = TickerHeader
-        Range("Q2").Value = "Value"
+
+        ws.Cells(1, 9).Value = TickerHeader
+        ws.Cells(1, 10).Value = YearlyChangeHeader
+        ws.Cells(1, 11).Value = PercentChangeHeader
+        ws.Cells(1, 12).Value = TotalStockVolumeHeader
+        ws.Range("O2").Value = "Greatest % Increase"
+        ws.Range("O3").Value = "Greatest % Decrease"
+        ws.Range("O4").Value = "Greatest Total Volume"
+        ws.Range("P1").Value = TickerHeader
+        ws.Range("Q1").Value = "Value"
         LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
 
         For i = 2 To LastRow
@@ -39,11 +40,10 @@ Sub Ticker()
                     OpeningValue = ws.Cells(i, 3).Value
 
             ElseIf ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
-                    
                 TickerName = ws.Cells(i, 1).Value
                 ClosingValue = ws.Cells(i, 6)
-                    
                 TickerYearlyChange = ClosingValue - OpeningValue
+
                 If OpeningValue <> 0 Then
                     TickerPercentChange = ((ClosingValue - OpeningValue) / OpeningValue)
                 Else
@@ -51,9 +51,10 @@ Sub Ticker()
                 End If
                     
                 TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
-                    
+                
                 ws.Range("I" & Summary_Table_Row).Value = TickerName
                 ws.Range("J" & Summary_Table_Row).Value = TickerYearlyChange
+
                     If TickerYearlyChange < 0 Then
                         ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 3
                     Else
@@ -63,13 +64,13 @@ Sub Ticker()
                 ws.Range("K" & Summary_Table_Row).Value = TickerPercentChange
                 ws.Range("L" & Summary_Table_Row).Value = TotalStockVolume
 
-                If TickerPercentChange > GreatestIncrease Then 
+                If TickerPercentChange > GreatestIncrease Then
                     GreatestIncrease = TickerPercentChange
                     ws.Range("P2").Value = TickerName
                     ws.Range("Q2").Value = GreatestIncrease
                 End If
 
-                If TickerPercentChange =< GreatestDecrease Then 
+                If TickerPercentChange < GreatestDecrease Then
                     GreatestDecrease = TickerPercentChange
                     ws.Range("P3").Value = TickerName
                     ws.Range("Q3").Value = GreatestDecrease
@@ -91,7 +92,6 @@ Sub Ticker()
 
             Else
                 TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
-
             End If
         Next i
     Next ws
