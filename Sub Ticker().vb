@@ -1,67 +1,98 @@
 Sub Ticker()
-'Create variable for ticker name as string
-Dim TickerName As String
-' Create summary table
-Dim Summary_Table_Row As Long
-Summary_Table_Row = 2
-Dim TickerYearlyChange As Double
-Dim TickerPercentChange As Double
-Dim TotalStockVolume As LongLong
-Dim OpeningValue As Double
-Dim ClosingValue As Double
-TotalStockVolume = 0
 
+    For Each ws In Worksheets
+        'Create variable for ticker name as string
+        Dim TickerName As String
+        Dim Summary_Table_Row As Long
+        Summary_Table_Row = 2
+        Dim TickerYearlyChange As Double
+        Dim TickerPercentChange As Double
+        Dim TotalStockVolume As LongLong
+        Dim OpeningValue As Double
+        Dim ClosingValue As Double
+        TotalStockVolume = 0
+        Dim TickerHeader As String
+        Dim YearlyChangeHeader As String
+        Dim PercentChangeHeader As String
+        Dim TotalStockVolumeHeader As String
+        Dim GreatestIncrease as Double
+        Dim GreatestDecrease as Double
+        Dim GreatestTotalVolume as LongLong
 
-
-
-
-'
-   ' For Each ws In Worksheets
-       ' Dim WorkSheetName As String
-       ' WorkSheetName = ws.Name
+        TickerHeader = "Ticker"
+        YearlyChangeHeader = "Yearly Change"
+        PercentChangeHeader = "Percent Change"
+        TotalStockVolumeHeader = "Total Stock Volume"
+        Cells(1, 9).Value = TickerHeader
+        Cells(1, 10).Value = YearlyChangeHeader
+        Cells(1, 11).Value = PercentChangeHeader
+        Cells(1, 12).Value = TotalStockVolumeHeader
+        Range("O2").Value = "Greatest % Increase"
+        Range("O3").Value = "Greatest % Decrease"
+        Range("O4").Value = "Greatest Total Volume"
+        Range("P1").Value = TickerHeader
+        Range("Q2").Value = "Value"
         LastRow = Cells(Rows.Count, 1).End(xlUp).Row
-            For i = 2 To LastRow
-                If Cells(i - 1, 1).Value <> Cells(i, 1).Value Then
+
+        For i = 2 To LastRow
+            If Cells(i - 1, 1).Value <> Cells(i, 1).Value Then
                     OpeningValue = Cells(i, 3).Value
 
-                 ElseIf Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+            ElseIf Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
                     
-                    TickerName = Cells(i, 1).Value
-                
-                    ClosingValue = Cells(i, 6)
+                TickerName = Cells(i, 1).Value
+                ClosingValue = Cells(i, 6)
                     
-                    TickerYearlyChange = ClosingValue - OpeningValue
-                    If OpeningValue <> 0 Then
-                        TickerPercentChange = ((ClosingValue - OpeningValue) / OpeningValue)
+                TickerYearlyChange = ClosingValue - OpeningValue
+                If OpeningValue <> 0 Then
+                    TickerPercentChange = ((ClosingValue - OpeningValue) / OpeningValue)
+                Else
+                    TickerPercentChange = 0
+                End If
+                    
+                TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
+                    
+                Range("I" & Summary_Table_Row).Value = TickerName
+                Range("J" & Summary_Table_Row).Value = TickerYearlyChange
+                    If TickerYearlyChange < 0 Then
+                        Range("J" & Summary_Table_Row).Interior.ColorIndex = 3
                     Else
-                        TickerPercentChange = 0
+                        Range("J" & Summary_Table_Row).Interior.ColorIndex = 4
                     End If
                     
-                    TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
-                    
-                    Range("I" & Summary_Table_Row).Value = TickerName
-                    Range("J" & Summary_Table_Row).Value = TickerYearlyChange
-                        If TickerYearlyChange < 0 Then
-                            Range("J" & Summary_Table_Row).Interior.ColorIndex = 3
-                        Else
-                            Range("J" & Summary_Table_Row).Interior.ColorIndex = 4
-                        End If
-                    
-                    Range("K" & Summary_Table_Row).Value = TickerPercentChange
-                    Range("L" & Summary_Table_Row).Value = TotalStockVolume
+                Range("K" & Summary_Table_Row).Value = TickerPercentChange
+                Range("L" & Summary_Table_Row).Value = TotalStockVolume
 
-                    Summary_Table_Row = Summary_Table_Row + 1
-
-                    TickerYearlyChange = 0
-                    TickerPercentChange = 0
-                    TotalStockVolume = 0
-                    OpeningValue = 0
-                    ClosingValue = 0
-                 Else
-                    TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
-
+                If TickerPercentChange > GreatestIncrease Then 
+                    GreatestIncrease = TickerPercentChange
+                    Range("P2").Value = TickerName
+                    Range("Q2").Value = GreatestIncrease
                 End If
-            Next i
-   ' Next ws
 
+                If TickerPercentChange =< GreatestDecrease Then 
+                    GreatestDecrease = TickerPercentChange
+                    Range("P3").Value = TickerName
+                    Range("Q3").Value = GreatestDecrease
+                End If
+
+                If TotalStockVolume > GreatestTotalVolume Then
+                    GreatestTotalVolume = TotalStockVolume
+                    Range("P4").Value = TickerName
+                    Range("Q4").Value = GreatestTotalVolume
+                End If
+
+                Summary_Table_Row = Summary_Table_Row + 1
+
+                TickerYearlyChange = 0
+                TickerPercentChange = 0
+                TotalStockVolume = 0
+                OpeningValue = 0
+                ClosingValue = 0
+
+            Else
+                TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
+
+            End If
+        Next i
+    Next ws
 End Sub
